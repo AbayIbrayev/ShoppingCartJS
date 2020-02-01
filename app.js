@@ -52,7 +52,7 @@ class UI {
             <img src="${product.image}" alt="product" class="product-img">
             <button class="bag-btn" data-id="${product.id}">
               <i class="fas fa-shopping-cart"></i>
-              Add To Bag
+              Add To Cart
             </button>
           </div>
           <h3>${product.title}</h3>
@@ -92,6 +92,7 @@ class UI {
         this.addCartItem(cartItem);
         // show the cart
         this.showCart();
+        clearCartBtn.innerText = "Clear Cart";
       });
 
     });
@@ -145,6 +146,31 @@ class UI {
     cartDOM.classList.remove('showCart');
     document.body.style.overflow = "";
   }
+  cartLogic() {
+    clearCartBtn.addEventListener('click', () => {
+      this.clearCart();
+    });
+  }
+  clearCart() {
+    let cartItems = cart.map(item => item.id);
+    cartItems.forEach(id => this.removeItem(id));
+    while (cartContent.children.length > 0) {
+      cartContent.removeChild(cartContent.children[0])
+    }
+    this.hideCart();
+    clearCartBtn.innerText = "Add Products";
+  }
+  removeItem(id) {
+    cart = cart.filter(item => item.id !== id);
+    this.setCartValues(cart);
+    Storage.saveCart(cart);
+    let button = this.getSingleButton(id);
+    button.disabled = false;
+    button.innerHTML = `<i class="fas fa-shopping-cart"></i>add to cart`;
+  }
+  getSingleButton(id) {
+    return buttonsDOM.find(button => button.dataset.id === id);
+  }
 }
 
 /* ------------------------------ local storage ----------------------------- */
@@ -180,6 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(() => {
       ui.getBagButtons();
+      ui.cartLogic();
     })
     .catch((err) => {
 
