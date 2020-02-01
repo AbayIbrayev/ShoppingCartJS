@@ -13,6 +13,9 @@
   padding: 0;
   box-sizing: border-box;
 }
+html {
+  scroll-behavior: smooth;
+}
 body {
   color: var(--mainBlack);
   background: var(--mainWhite);
@@ -96,6 +99,7 @@ body {
   transition: var(--mainTransition);
   cursor: pointer;
   outline: none;
+  text-decoration: none;
 }
 .banner-btn:hover {
   background: transparent;
