@@ -147,15 +147,50 @@ class UI {
     document.body.style.overflow = "";
   }
   cartLogic() {
+    cartOverlay.addEventListener('click', (event) => {
+      if (event.target == cartOverlay) {
+        this.hideCart();
+      }
+    });
     clearCartBtn.addEventListener('click', () => {
       this.clearCart();
+    });
+    cartContent.addEventListener('click', event => {
+      if (event.target.classList.contains('remove-item')) {
+        let removeItem = event.target,
+          id = removeItem.dataset.id;
+        cartContent.removeChild(removeItem.parentElement.parentElement);
+        this.removeItem(id);
+      } else if (event.target.classList.contains('fa-chevron-up')) {
+        let addAmount = event.target,
+          id = addAmount.dataset.id,
+          tempItem = cart.find(item => item.id === id);
+        tempItem.amount = tempItem.amount + 1;
+        Storage.saveCart(cart);
+        this.setCartValues(cart);
+        addAmount.nextElementSibling.innerText = tempItem.amount;
+      } else if (event.target.classList.contains('fa-chevron-down')) {
+        let lowerAmount = event.target,
+          id = lowerAmount.dataset.id,
+          tempItem = cart.find(item => item.id === id);
+
+        tempItem.amount = tempItem.amount - 1;
+        if (tempItem.amount > 0) {
+          Storage.saveCart(cart);
+          this.setCartValues(cart);
+          lowerAmount.previousElementSibling.innerText = tempItem.amount;
+        } else {
+          cartContent.removeChild(lowerAmount.parentElement.parentElement);
+          this.removeItem(id);
+        }
+      }
     });
   }
   clearCart() {
     let cartItems = cart.map(item => item.id);
     cartItems.forEach(id => this.removeItem(id));
     while (cartContent.children.length > 0) {
-      cartContent.removeChild(cartContent.children[0])
+      cartContent.removeChild(cartContent.children[0]);
     }
     this.hideCart();
     clearCartBtn.innerText = "Add Products";
